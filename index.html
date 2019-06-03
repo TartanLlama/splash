@@ -29,6 +29,13 @@
         padding: 7px;
         border-radius: 7px;
       }
+      #attrib {
+        position: absolute;
+        bottom: 1px;
+        left: 80px;
+        font-size: x-small;
+        background: white;
+      }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
   </head>
@@ -39,6 +46,7 @@
         <button onclick="splash()">Splash!</button>
     </div> 
     <div id="map"></div>
+    <div id="attrib">Icons made by <a href="https://www.freepik.com/?__hstc=57440181.4307f1f9f85905d11965157a42c51436.1559558516457.1559558516457.1559558516457.1&__hssc=57440181.3.1559558516458&__hsfp=3428520075" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 
     <script>
       var map;
@@ -78,9 +86,11 @@
       }
 
       function createMarker(place) {
+        const icon = 'milkshake.png';
         var marker = new google.maps.Marker({
           map: map,
-          position: place.geometry.location
+          position: place.geometry.location,
+          icon: icon
         });
 
         google.maps.event.addListener(marker, 'click', function() {
