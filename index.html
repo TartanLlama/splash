@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Splash the Fash</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="position: absolute; top: 60px; right: 10px; z-index: 1; background: white; padding: 5px;">
+        Where is the fash?<br/>
+        <input id="location" type="text"><br/>
+        <button onclick="splash()">Splash!</button>
+    </div> 
+    <div id="map"></div>
+
+    <script>
+      var map;
+      var service;
+      var infowindow;
+      var markers = [];
+
+      function splash() {
+        // Clear out the old markers.
+        markers.forEach(function(marker) {
+                  marker.setMap(null);
+                });
+        markers = [];
+
+        var request = {
+            query: 'milkshake near ' + document.getElementById('location').value
+        };
+
+        service.textSearch(request, function(results, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            var bounds = new google.maps.LatLngBounds();
+
+            for (var i = 0; i < results.length; i++) {
+              createMarker(results[i]);
+
+              if (results[i].geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(results[i].geometry.viewport);
+              } else {
+                bounds.extend(results[i].geometry.location);
+              }
+            }
+
+            map.fitBounds(bounds);
+          }
+        });
+      }
+
+      function createMarker(place) {
+        var marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.setContent(place.name);
+          infowindow.open(map, this);
+        });
+
+        markers.push(marker);
+      }
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 0, lng: 0},
+          zoom: 2
+        });
+
+        infowindow = new google.maps.InfoWindow();
+        service = new google.maps.places.PlacesService(map);
+
+        const node = document.getElementById('location');
+        node.addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+              splash();
+            }
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCl1Vasa6nNP1EZlhYUk4SbpY9GWWsEzTc&libraries=places&callback=initMap"
+    async defer></script>
+  </body>
+</html>
